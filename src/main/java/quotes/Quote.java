@@ -9,6 +9,10 @@ public class Quote {
         this.text = text;
     }
 
+    public Quote(String text) {
+        this.text = text;
+    }
+
     @Override
     public String toString() {
         return "By  " + author + '\'' +

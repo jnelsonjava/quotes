@@ -6,28 +6,60 @@ package quotes;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class App {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        System.out.println(new App().getGreeting());
-        if (args.length>0){
-            String authorName = "";
-            for (int i = 0; i<args.length-1; i++){
-                authorName += args[i]+ " ";
-            }
-            authorName += args[args.length-1];
-            System.out.println(new App().printQuote("src/main/resources/recentquotes.json", authorName));
+    public static void main(String[] args) throws IOException {
+//        if (args.length>0) {
+//            String authorName = "";
+//            for (int i = 0; i < args.length - 1; i++) {
+//                authorName += args[i] + " ";
+//            }
+//            authorName += args[args.length - 1];
+//            System.out.println(new App().printQuote("src/main/resources/recentquotes.json", authorName));
+//        } else {
+//            try {
+                System.out.println(new App().starWarsQuote());
+//            } catch (Exception e) {
+//                System.out.println(new App().printQuote("src/main/resources/recentquotes.json"));
+//            }
+//        }
 
-        } else {
-            System.out.println(new App().printQuote("src/main/resources/recentquotes.json"));
-        }
+        StarWarsQuote testStarWars = new StarWarsQuote( "any string");
+        System.out.println(testStarWars);
     }
+
+    public String starWarsQuote() throws IOException {
+        Gson gson = new Gson();
+
+
+        URL url = new URL("http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String firstLine = input.readLine();
+        StringBuffer entireStringFromResponse = new StringBuffer();
+
+        while (firstLine != null) {
+            entireStringFromResponse.append(firstLine);
+            firstLine = input.readLine();
+        }
+        input.close();
+
+        StarWarsQuote swQuote = gson.fromJson(entireStringFromResponse.toString(), StarWarsQuote.class);
+        swQuote.normalizeToQuote();
+        System.out.println("this should be updated: " + swQuote);
+
+        return entireStringFromResponse.toString();
+    }
+
     public String printQuote(String filePath) throws FileNotFoundException{
         Gson gson = new Gson();
         Scanner allQuotes = new Scanner (new File(filePath));
