@@ -13,13 +13,10 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
 
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println(new App().getGreeting());
-        if (args[0] != null){
+        if (args.length>0){
             String authorName = "";
             for (int i = 0; i<args.length-1; i++){
                 authorName += args[i]+ " ";
@@ -53,7 +50,6 @@ public class App {
         ArrayList<Quote> quoteList = new ArrayList<>();
         quoteList = gson.fromJson(quotesJSON, new TypeToken<ArrayList<Quote>>(){}.getType());
         for (Quote q:quoteList){
-            System.out.println(q.author + author);
             if (q.author.equals(author)) {
                 return q.toString();
             }

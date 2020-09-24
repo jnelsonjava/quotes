@@ -10,10 +10,7 @@ import java.io.FileNotFoundException;
 import static org.junit.Assert.*;
 
 public class AppTest {
-    @Test public void testAppHasAGreeting() {
-        App classUnderTest = new App();
-        assertNotNull("app should have a greeting", classUnderTest.getGreeting());
-    }
+
     @Test public void testMainFileNotFound(){
         App classUnderTest = new App();
         assertThrows("this filepath does not exist!", Exception.class, ()-> classUnderTest.printQuote("src/test/resources/x.json"));
