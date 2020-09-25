@@ -20,7 +20,8 @@ public class App {
         if (args.length>0) {
             if (args[0].equals("internet")){
                 try {
-                    System.out.println(new App().starWarsQuote());
+                    String url = "http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote";
+                    System.out.println(new App().starWarsQuote(url));
                     return;
                 } catch (Exception e) {
                     System.out.println(new App().printQuote("src/main/resources/recentquotes.json"));
@@ -41,9 +42,9 @@ public class App {
         return;
     }
 
-    public String starWarsQuote() throws IOException {
+    public String starWarsQuote(String thisURL) throws IOException {
         Gson gson = new Gson();
-        URL url = new URL("http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote");
+        URL url = new URL(thisURL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
