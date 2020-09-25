@@ -17,6 +17,12 @@ import java.util.Scanner;
 public class App {
 
     public static void main(String[] args) throws IOException {
+        //1. command line options are local vs internet
+        // 2. if internet API call to SW and catch it
+        //3. catch should be to pick a random quote
+        //4. jf local without author then get random quote
+        //5. if local with author name, search for author in recent quotes
+
 //        if (args.length>0) {
 //            String authorName = "";
 //            for (int i = 0; i < args.length - 1; i++) {
@@ -55,23 +61,28 @@ public class App {
 
         StarWarsQuote swQuote = gson.fromJson(entireStringFromResponse.toString(), StarWarsQuote.class);
         swQuote.normalizeToQuote();
-        System.out.println("this should be updated: " + swQuote);
-
+        // getting all the quotes from the recentquotes.json file
+        ArrayList<Quote> allQuotes = getRecentQuotes("src/main/resources/recentquotes.json");
+        allQuotes.add((swQuote));
+        // write the file into the recentquotes.json file
+        writeRecentQuotes("src/main/resources/recentquotes.json", allQuotes);
         return entireStringFromResponse.toString();
     }
 
     public String printQuote(String filePath) throws FileNotFoundException{
-        Gson gson = new Gson();
-        Scanner allQuotes = new Scanner (new File(filePath));
-        String quotesJSON = "";
-        while (allQuotes.hasNext()){
-            quotesJSON+=allQuotes.nextLine();
-        }
-        ArrayList<Quote> quoteList = new ArrayList<>();
-        quoteList = gson.fromJson(quotesJSON, new TypeToken<ArrayList<Quote>>(){}.getType());
+//        Gson gson = new Gson();
+//        Scanner allQuotes = new Scanner (new File(filePath));
+//        String quotesJSON = "";
+//        while (allQuotes.hasNext()){
+//            quotesJSON+=allQuotes.nextLine();
+//        }
+//        ArrayList<Quote> quoteList = new ArrayList<>();
+//        quoteList = gson.fromJson(quotesJSON, new TypeToken<ArrayList<Quote>>(){}.getType());
+        ArrayList<Quote> quoteList = getRecentQuotes(filePath);
         int nextIndex = (int) (Math.random()*quoteList.size());
         return quoteList.get(nextIndex).toString();
     }
+    //this method takes
     public String printQuote(String filePath, String author) throws FileNotFoundException{
         Gson gson = new Gson();
         Scanner allQuotes = new Scanner (new File(filePath));
@@ -87,6 +98,27 @@ public class App {
             }
         }
         return "We do not have the author in our list!";
+
+    }
+    // this method takes in a string filepath and gets all the quotes from a .json file
+    public ArrayList<Quote> getRecentQuotes(String filePath) throws FileNotFoundException {
+        Gson gson = new Gson();
+        Scanner allQuotes = new Scanner (new File(filePath));
+        String quotesJSON = "";
+        while (allQuotes.hasNext()){
+            quotesJSON+=allQuotes.nextLine();
+        }
+        ArrayList<Quote> quoteList = new ArrayList<>();
+        quoteList = gson.fromJson(quotesJSON, new TypeToken<ArrayList<Quote>>(){}.getType());
+        return quoteList;
+    }
+    public void writeRecentQuotes(String filepath, ArrayList<Quote> allQuotes) throws IOException {
+        File jsonFile = new File(filepath);
+        jsonFile.createNewFile();
+        FileWriter jsonFileWriter = new FileWriter(filepath);
+        Gson gson = new Gson();
+        gson.toJson(allQuotes, jsonFileWriter);
+        jsonFileWriter.close();
 
     }
 }
