@@ -7,16 +7,8 @@ public class StarWarsQuote extends Quote {
         super(text);
     }
 
-    @Override
-    public String toString() {
-        return "StarWarsQuote{" +
-                "starWarsQuote='" + starWarsQuote + '\'' +
-                ", author='" + author + '\'' +
-                ", text='" + text + '\'' +
-                '}';
-    }
-
     public void normalizeToQuote() {
-        this.text = this.starWarsQuote;
+        this.text = this.starWarsQuote.split("\\s—\\s")[0].toString();
+        this.author = this.starWarsQuote.split("\\s—\\s")[1].toString();
     }
 }

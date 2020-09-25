@@ -15,7 +15,7 @@ public class Quote {
 
     @Override
     public String toString() {
-        return "By  " + author + '\'' +
-                 text + '\'';
+        return "By " + author + "  '" +
+                 text + "'";
     }
 }

@@ -5,7 +5,12 @@ package quotes;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 
 import static org.junit.Assert.*;
 
@@ -20,4 +25,50 @@ public class AppTest {
         App classUnderTest = new App();
         assertEquals("By  Marilyn Monroe' “I am good, but not an angel. I do sin, but I am not the devil. I am just a small girl in a big world trying to find someone to love.” '", classUnderTest.printQuote("src/test/resources/testOneQuote.json"));
     }
+    //test randomness of the quote
+    @Test public void testPrintQuote() throws FileNotFoundException {
+        App classUnderTest = new App();
+        HashMap<String, Integer> countQuotes = new HashMap<>();
+        for (int i=0; i<10000; i++){
+            String quote = classUnderTest.printQuote("src/test/resources/testFourQuotes.json");
+            if (!countQuotes.containsKey(quote)) {
+                countQuotes.put(quote, 1);
+            } else {
+                int count = countQuotes.get(quote);
+                count ++;
+                countQuotes.put(quote,count);
+            }
+        }
+        System.out.println(countQuotes);
+        for (String i: countQuotes.keySet()){
+            System.out.println(countQuotes.get(i)+i);
+            assertTrue("this is in the range 2400-2600", 2400<countQuotes.get(i)&&countQuotes.get(i)<2600);
+        }
+    }
+    @Test public void testStarWarsQuoteException(){
+        App classUnderTest = new App();
+        String url = "http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuoteXXX";
+        assertThrows("This is testing the starwars quote exception handling", Exception.class, ()->classUnderTest.starWarsQuote(url) );
+    }
+    @Test public void testPrintQuoteAuthorPresent() throws FileNotFoundException {
+        App classUnderTest = new App();
+        assertEquals("By Charles Dickens  ' “Ask no questions, and you'll be told no lies.” '", classUnderTest.printQuote("src/test/resources/testFourQuotes.json", "Charles Dickens"));
+    }
+    @Test public void testPrintQuoteAuthorAbsent() throws FileNotFoundException {
+        App classUnderTest = new App();
+        assertEquals("We do not have the author in our list!", classUnderTest.printQuote("src/test/resources/testFourQuotes.json", "Charles"));
+    }
+    // checking if a new file exists and verifies its contents
+    @Test public void testWriteRecentQuotes() throws IOException {
+        App classUnderTest = new App();
+        ArrayList<Quote> testArrayList = new ArrayList<>();
+        testArrayList.add(new Quote("testing author", "testing text"));
+        String filePath = "src/test/resources/testNewFile2.json";
+        classUnderTest.writeRecentQuotes(filePath, testArrayList);
+        File testFile = new File(filePath);
+        assertTrue("This file path exists", testFile.exists());
+        Scanner allQuotes = new Scanner (testFile);
+        assertEquals("[{\"author\":\"testing author\",\"text\":\"testing text\"}]",allQuotes.nextLine() );
+    }
+
 }
